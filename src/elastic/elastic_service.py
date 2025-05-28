@@ -1,4 +1,6 @@
 import io
+
+import pandas as pd
 from tqdm import tqdm
 
 from docx import Document
@@ -112,6 +114,27 @@ class ElasticService:
         #         "body_vector": vector,
         #     }
         #     documents.append(doc)
+
+        for table in tqdm(full_doc.tables, total=len(full_doc.tables) ,desc="Processint tables"):
+            last_index = 0
+            table_data = []
+            for row in table.rows:
+                row_data = [cell.text.strip() for cell in row.cells]
+                table_data.append(row_data)
+            table_df = pd.DataFrame(table_data[1:], columns=table_data[0])
+            for index, row in table_df.iterrows():
+                # table_data.append(row_data)
+                # table_description = await self.llm_service.generate_table_description(table_data)
+                vector = self.encode(str(row))
+                doc = {
+                    "_id": str(ids + index + 1),
+                    "num_id": index,
+                    "body": str(row),
+                    "body_vector": vector,
+                }
+                documents.append(doc)
+                last_index += 1
+            ids += last_index
 
         if documents:
             bulk(self.client, documents, index=index_name)

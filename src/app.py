@@ -1,9 +1,10 @@
 import asyncio
+import json
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 
 from src.bot import bot
 from src.elastic.elastic_controller import elastic_router

@@ -4,4 +4,4 @@ DECFILE
 *.docx
 .env.*
 venv
-*.ipynb
+*/data
